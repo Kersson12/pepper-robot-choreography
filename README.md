@@ -1,95 +1,61 @@
+# 🤖 Pepper Robot Choreography (Python + NAOqi)
 
-# 🤖 Proyecto Pepper
+> **EN:** Python script that makes SoftBank's **Pepper** humanoid robot perform a choreography: base movement, arm and head joint interpolation, a bow and a 360° turn, with synchronized speech. It uses the **NAOqi** SDK (ALMotion, ALRobotPosture, ALTextToSpeech). Demo videos are included.
 
-Este proyecto tiene como objetivo controlar al robot Pepper utilizando Python y la interfaz NAOqi, permitiéndole ejecutar una secuencia de movimientos tipo coreografía.
+Script en **Python** que controla al robot humanoide **Pepper** (SoftBank Robotics) para ejecutar una coreografía con movimiento de la base, articulaciones de brazos y cabeza, reverencia y giro completo, mientras habla en cada paso. Usa los módulos de **NAOqi**.
 
-## 👨‍💻 Autores
-
-- Miguel Ángel Jiménez Morales  
-- Dikersson Alexis Cañon Vanegas  
-- 📅 Fecha: 25 de abril de 2025
-
----
-
-## 📦 Librerías utilizadas
-
-- **naoqi**: Interfaz principal para comunicación con Pepper.
-- **argparse**: Análisis de argumentos desde la terminal.
-- **sys**: Acceso a variables del sistema.
-- **os**: Funciones dependientes del sistema operativo.
-- **almath**: Cálculos matemáticos para robótica.
-- **math**: Funciones matemáticas estándar.
-- **motion**: Control del movimiento del robot.
-- **httplib**: Cliente HTTP para Python 2.
-- **json**: Manejo de datos en formato JSON.
+![Python](https://img.shields.io/badge/Python-2.7-3776AB?logo=python&logoColor=white)
+![NAOqi](https://img.shields.io/badge/SDK-NAOqi-00A0DC)
+![Robot](https://img.shields.io/badge/Robot-Pepper-lightgrey)
 
 ---
 
-## 🛠 Requisitos
+## 🎥 Demo
 
-- Python 2.7
-- Framework NAOqi
-- Acceso a un robot Pepper (en la misma red)
-- Choregraphe instalado
+Los videos [`1.mp4`](1.mp4) y [`2.mp4`](2.mp4) muestran a Pepper ejecutando la coreografía.
 
----
+## Secuencia de la coreografía
 
-## 🚀 Instalación y uso
+| # | Movimiento | API NAOqi |
+|---|---|---|
+| 0 | Despertar y postura inicial *"Hola, estoy listo para bailar"* | `wakeUp()`, `goToPosture("StandInit")` |
+| 1 | Avanza 30 cm y levanta el brazo derecho | `moveTo(0.3, 0, 0)`, `angleInterpolationWithSpeed("RShoulderPitch", …)` |
+| 2 | Retrocede y cambia al brazo izquierdo | `moveTo(-0.3, 0, 0)`, `LShoulderPitch`, `LElbowYaw` |
+| 3–4 | Desplazamiento lateral derecha e izquierda | `moveTo(0, ±y, 0)` |
+| 5 | Giro de cabeza ±45° | `angleInterpolation("HeadYaw", …)` |
+| 6 | Reverencia (cadera y rodilla) | `HipPitch`, `KneePitch` |
+| 7 | Giro completo de 360° y descanso | `moveTo(0, 0, 2π)`, `rest()` |
 
-### Conexión con Pepper
+## Cómo ejecutarlo
 
-1. Asegúrate de estar en la misma red que el robot.
-2. Abre terminal en Ubuntu.
-3. Usa el comando:
-   ```bash
-   ssh nao@<DIRECCIÓN_IP>
-   ```
+Requisitos: un robot Pepper en la misma red, **Python 2.7** y el SDK **NAOqi**. Choregraphe es opcional.
 
-### Ejecución del script
+```bash
+# 1. Copiar el script al robot
+scp robot.py nao@<IP_DEL_ROBOT>:~/
 
-1. Abre un archivo con `nano`:
-   ```bash
-   nano coreografia.py
-   ```
-2. Pega el código proporcionado.
-3. Guarda con `CTRL + O`, cierra con `CTRL + X`.
-4. Ejecuta con:
-   ```bash
-   python coreografia.py
-   ```
+# 2. Conectarse y ejecutarlo dentro del robot (robotIP = 127.0.0.1 en el script)
+ssh nao@<IP_DEL_ROBOT>
+python robot.py
+```
 
----
+> Para ejecutarlo desde un PC en vez del robot, cambia `robotIP` en `robot.py` por la IP de Pepper.
 
-## 🧠 Descripción del código
+## Archivos
 
-- **ALProxy**: Conexión a módulos como ALMotion, ALTextToSpeech, etc.
-- **wakeUp()**: Activa al robot.
-- **goToPosture("StandInit", 0.5)**: Posición inicial.
-- **moveTo(x, y, θ)**: Movimiento en espacio 2D o rotación.
-- **angleInterpolationWithSpeed()**: Movimiento de articulaciones con velocidad controlada.
-- **angleInterpolation()**: Interpolación de ángulos de cabeza.
+| Archivo | Contenido |
+|---|---|
+| `robot.py` | Script de la coreografía |
+| `Proyecto Pepper.pdf` / `Pepper.tex` | Informe técnico (LaTeX) |
+| `1.mp4`, `2.mp4` | Videos de demostración |
 
----
+## Conceptos aplicados
 
-## 🎯 Funciones principales
-
-- Movimientos de brazos y piernas.
-- Síntesis de voz.
-- Movimiento de cabeza.
-- Giro completo final.
+- Control de un robot humanoide con proxies remotos (`ALProxy`) sobre la red.
+- Interpolación de ángulos articulares con control de velocidad.
+- Locomoción omnidireccional de la base (`moveTo` en x, y, θ).
+- Sincronización de voz y movimiento.
 
 ---
 
-## 🧪 Guía rápida para Choregraphe
-
-1. Abrir Choregraphe.
-2. Aceptar términos y activar periodo de prueba.
-3. Conectar al robot Pepper.
-4. Usar bloques para diseñar la coreografía.
-5. Ejecutar.
-
----
-
-## 📌 Nota
-
-Este proyecto fue realizado como parte de un ejercicio de control básico del robot Pepper. Está enfocado en comprender la integración entre Python y NAOqi para el desarrollo de movimientos predefinidos.
+Autores: **Miguel Ángel Jiménez Morales** y **Dikersson Alexis Cañón Vanegas**. Ingeniería de Telecomunicaciones, Universidad Santo Tomás, abril de 2025.
